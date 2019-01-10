@@ -1,0 +1,23 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@io_bazel_rules_go//extras:bindata.bzl", "bindata")
+
+bindata(
+    name = "bindata",
+    package = "main",
+    srcs = ["//cmd/child:child"],
+    extra_args= ["-prefix=bazel-out/k8-fastbuild/bin/cmd/child/linux_amd64_stripped"],
+)
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go",":bindata"],
+    importpath = "github.com/simonswine/bazel-demo-golang/cmd/parent",
+    visibility = ["//visibility:private"],
+)
+
+go_binary(
+    name = "parent",
+    embed = [":go_default_library"],
+    visibility = ["//visibility:public"],
+)
+
